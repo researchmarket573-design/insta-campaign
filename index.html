@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Follow & Win</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;font-family:Poppins,sans-serif}
+body{
+    margin:0;
+    background:#ffffff;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+.card{
+    width:100%;
+    max-width:420px;
+    padding:30px;
+    border-radius:22px;
+    box-shadow:0 15px 40px rgba(0,0,0,.12);
+    text-align:center;
+}
+h2{margin:0}
+.counter{
+    font-size:36px;
+    font-weight:700;
+    margin-top:15px;
+}
+.follow-btn{
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:50px;
+    font-size:16px;
+    font-weight:600;
+    color:#fff;
+    background:linear-gradient(135deg,#fd1d1d,#c13584,#833ab4);
+    margin-top:20px;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(193,53,132,.4);
+}
+.prize-box{
+    margin-top:25px;
+    background:#f5f5f5;
+    padding:15px;
+    border-radius:15px;
+    font-weight:600;
+}
+.note{
+    font-size:11px;
+    color:#888;
+    margin-top:10px;
+}
+
+/* POPUP */
+.popup{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+}
+.popup-box{
+    background:#fff;
+    padding:30px;
+    border-radius:20px;
+    width:90%;
+    max-width:350px;
+    text-align:center;
+    animation:pop .4s ease;
+}
+@keyframes pop{
+    from{transform:scale(.7);opacity:0}
+    to{transform:scale(1);opacity:1}
+}
+.amount{
+    font-size:32px;
+    font-weight:700;
+    color:#0a8f3c;
+}
+
+/* CONFETTI */
+.confetti{
+    position:fixed;
+    width:10px;
+    height:10px;
+    top:-10px;
+    animation:fall linear forwards;
+    z-index:1000;
+}
+@keyframes fall{
+    to{
+        transform:translateY(110vh) rotate(360deg);
+        opacity:0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <h2>Follow & Win</h2>
+    <p>Official Instagram Campaign</p>
+
+    <div class="counter" id="followers">12,450</div>
+    <small>Followers</small>
+
+    <button class="follow-btn" onclick="followNow()">
+        Follow @hyzrapp
+    </button>
+
+    <div class="prize-box">
+        If you follow, get cash prize up to<br>
+        <b>₹1,00,000</b>
+    </div>
+
+    <div class="note">
+        *Campaign display only
+    </div>
+</div>
+
+<!-- POPUP -->
+<div class="popup" id="popup">
+    <div class="popup-box">
+        <h2>🎉 Congratulations!</h2>
+        <p>You have won</p>
+        <div class="amount" id="winAmount">₹20</div>
+        <p class="note">Our team will verify your reward</p>
+    </div>
+</div>
+
+<script>
+let followers = 12450;
+const counter = document.getElementById("followers");
+
+// Animate follower counter
+setInterval(()=>{
+    followers += Math.floor(Math.random()*2);
+    counter.innerText = followers.toLocaleString("en-IN");
+},4000);
+
+// Follow click
+function followNow(){
+    localStorage.setItem("followed","yes");
+    followers++;
+    counter.innerText = followers.toLocaleString("en-IN");
+    window.open(
+        "https://www.instagram.com/hyzrapp?igsh=MWVwaWE1ZG9sM2NjMw==",
+        "_blank"
+    );
+}
+
+// On return
+window.onload = ()=>{
+    if(localStorage.getItem("followed")==="yes"){
+        localStorage.removeItem("followed");
+        showPrize();
+    }
+};
+
+// Prize logic + confetti
+function showPrize(){
+    let rand = Math.random()*100;
+    let prize="₹20";
+
+    if(rand<60) prize="₹20";
+    else if(rand<85) prize="₹30";
+    else if(rand<97) prize="₹50";
+    else prize="₹1,00,000";
+
+    document.getElementById("winAmount").innerText=prize;
+    document.getElementById("popup").style.display="flex";
+
+    launchConfetti();
+
+    setTimeout(()=>{
+        let msg=encodeURIComponent(
+            `Hi, I followed HYZR Instagram (@hyzrapp) and won ${prize}. Please verify my reward.`
+        );
+        window.location.href=
+        `https://wa.me/918301848918?text=${msg}`;
+    },2500);
+}
+
+// Confetti animation
+function launchConfetti(){
+    for(let i=0;i<80;i++){
+        const c=document.createElement("div");
+        c.className="confetti";
+        c.style.left=Math.random()*100+"vw";
+        c.style.backgroundColor=
+            `hsl(${Math.random()*360},100%,50%)`;
+        c.style.animationDuration=
+            2+Math.random()*2+"s";
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(),4000);
+    }
+}
+</script>
+
+</body>
+</html>
